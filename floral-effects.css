@@ -1,190 +1,430 @@
-/* =====================================================
-   FLORAL EFFECTS
-   เพิ่มเอฟเฟกต์โดยไม่แก้เนื้อหาเดิม
-   ===================================================== */
+(() => {
+  "use strict";
 
-html {
-  scroll-behavior: smooth;
-}
+  /*
+   * 🌸 FLORAL DREAM EFFECTS
+   * Non-destructive enhancement
+   *
+   * ไม่แก้:
+   * - ข้อความ
+   * - รูปภาพ
+   * - ลิงก์
+   * - แบบฟอร์ม
+   * - เนื้อหาเดิม
+   */
 
-/* ชั้นบรรยากาศ */
-.floral-atmosphere {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 0;
-}
+  const prefersReducedMotion =
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-.floral-atmosphere::before,
-.floral-atmosphere::after {
-  content: "";
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  filter: blur(70px);
-  opacity: 0.18;
-}
+  /* =========================================================
+     1. โหลด CSS เอฟเฟกต์
+     ========================================================= */
 
-.floral-atmosphere::before {
-  left: -100px;
-  top: 10%;
-  background: #f3b5cf;
-  animation: floralGlow1 12s ease-in-out infinite alternate;
-}
+  if (!document.querySelector('link[data-floral-effects]')) {
+    const link = document.createElement("link");
 
-.floral-atmosphere::after {
-  right: -100px;
-  bottom: 10%;
-  background: #cdb8e8;
-  animation: floralGlow2 15s ease-in-out infinite alternate;
-}
+    link.rel = "stylesheet";
+    link.href = "floral-effects.css";
+    link.dataset.floralEffects = "true";
 
-/* Canvas กลีบดอกไม้ */
-#petal-canvas {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* ทำให้เนื้อหาเดิมอยู่เหนือเอฟเฟกต์ */
-body > *:not(.floral-atmosphere):not(#petal-canvas) {
-  position: relative;
-  z-index: 2;
-}
-
-/* Glassmorphism */
-.card {
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.78),
-    rgba(255, 245, 250, 0.60)
-  ) !important;
-
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-
-  border-color: rgba(255, 255, 255, 0.75) !important;
-
-  box-shadow:
-    0 18px 45px rgba(150, 100, 130, 0.14),
-    0 0 25px rgba(245, 180, 210, 0.08);
-
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
-/* Card เมื่อเอาเมาส์ผ่าน */
-.card.fx-hover {
-  box-shadow:
-    0 24px 55px rgba(150, 100, 130, 0.22),
-    0 0 35px rgba(245, 180, 210, 0.30);
-}
-
-/* ปุ่ม */
-.btn {
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease,
-    filter 0.3s ease;
-}
-
-.btn:hover {
-  transform: translateY(-3px);
-  filter: brightness(1.04);
-}
-
-/* ลิงก์เมนู */
-.nav-links a {
-  transition:
-    transform 0.3s ease,
-    color 0.3s ease,
-    text-shadow 0.3s ease;
-}
-
-.nav-links a:hover {
-  transform: translateY(-2px);
-  text-shadow: 0 0 12px rgba(230, 150, 190, 0.45);
-}
-
-/* รูปภาพ */
-img {
-  transition:
-    transform 0.45s ease,
-    filter 0.45s ease,
-    box-shadow 0.45s ease;
-}
-
-img:hover {
-  filter: brightness(1.03) saturate(1.04);
-}
-
-/* เอฟเฟกต์ตอนเลื่อนหน้า */
-.scroll-reveal {
-  opacity: 0;
-  transform: translateY(22px);
-  transition:
-    opacity 0.7s ease,
-    transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.scroll-reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* แสงพื้นหลังเคลื่อนไหว */
-@keyframes floralGlow1 {
-  from {
-    transform: translate(0, 0) scale(1);
+    document.head.appendChild(link);
   }
 
-  to {
-    transform: translate(110px, 50px) scale(1.15);
-  }
-}
+  /* =========================================================
+     2. สร้างชั้นบรรยากาศ
+     ========================================================= */
 
-@keyframes floralGlow2 {
-  from {
-    transform: translate(0, 0) scale(1);
-  }
+  function createAtmosphere() {
+    if (document.querySelector(".floral-atmosphere")) return;
 
-  to {
-    transform: translate(-100px, -60px) scale(1.12);
-  }
-}
+    const atmosphere = document.createElement("div");
 
-/* รองรับมือถือ */
-@media (max-width: 768px) {
-  .card.fx-tilt {
-    transform: none !important;
+    atmosphere.className = "floral-atmosphere";
+    atmosphere.setAttribute("aria-hidden", "true");
+
+    document.body.prepend(atmosphere);
   }
 
-  #petal-canvas {
-    opacity: 0.65;
-  }
-}
+  /* =========================================================
+     3. กลีบดอกไม้ลอย
+     ========================================================= */
 
-/* ถ้าผู้ใช้ตั้งค่าให้ลด Animation */
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+  function createPetals() {
+    if (document.querySelector(".floral-petals")) return;
+
+    const container = document.createElement("div");
+
+    container.className = "floral-petals";
+    container.setAttribute("aria-hidden", "true");
+
+    const symbols = [
+      "🌸",
+      "🌸",
+      "❀",
+      "✿",
+      "🌷",
+      "🍃"
+    ];
+
+    const amount =
+      window.innerWidth < 600 ? 14 : 26;
+
+    for (let i = 0; i < amount; i++) {
+      const petal = document.createElement("span");
+
+      petal.className = "floral-petal";
+
+      petal.textContent =
+        symbols[Math.floor(Math.random() * symbols.length)];
+
+      petal.style.left =
+        ${Math.random() * 100}%;
+
+      petal.style.animationDelay =
+        ${Math.random() * -15}s;
+
+      petal.style.animationDuration =
+        ${9 + Math.random() * 9}s;
+
+      petal.style.fontSize =
+        ${10 + Math.random() * 12}px;
+
+      petal.style.opacity =
+        ${0.25 + Math.random() * 0.45};
+
+      container.appendChild(petal);
+    }
+
+    document.body.appendChild(container);
   }
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    transition-duration: 0.001ms !important;
+  /* =========================================================
+     4. ลม
+     ========================================================= */
+
+  function windEffect() {
+    let mouseWind = 0;
+    let currentWind = 0;
+
+    window.addEventListener(
+      "pointermove",
+      (event) => {
+        if (
+          event.pointerType &&
+          event.pointerType !== "mouse"
+        ) {
+          return;
+        }
+
+        mouseWind =
+          (event.clientX / window.innerWidth - 0.5) * 2;
+      },
+      { passive: true }
+    );
+
+    function animateWind() {
+      currentWind +=
+        (mouseWind - currentWind) * 0.035;
+
+      document.documentElement.style.setProperty(
+        "--floral-wind",
+        ${currentWind * 12}px
+      );
+
+      requestAnimationFrame(animateWind);
+    }
+
+    animateWind();
   }
 
-  #petal-canvas {
-    display: none;
+  /* =========================================================
+     5. Mouse Parallax
+     ========================================================= */
+
+  function mouseParallax() {
+    let mouseX = 0;
+    let mouseY = 0;
+
+    let currentX = 0;
+    let currentY = 0;
+
+    window.addEventListener(
+      "pointermove",
+      (event) => {
+        if (
+          event.pointerType &&
+          event.pointerType !== "mouse"
+        ) {
+          return;
+        }
+
+        mouseX =
+          event.clientX / window.innerWidth - 0.5;
+
+        mouseY =
+          event.clientY / window.innerHeight - 0.5;
+      },
+      { passive: true }
+    );
+
+    function animate() {
+      currentX +=
+        (mouseX - currentX) * 0.04;
+
+      currentY +=
+        (mouseY - currentY) * 0.04;
+
+      document.documentElement.style.setProperty(
+        "--mouse-x",
+        ${currentX}px
+      );
+
+      document.documentElement.style.setProperty(
+        "--mouse-y",
+        ${currentY}px
+      );
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
   }
-}
+
+  /* =========================================================
+     6. Card Tilt
+     ========================================================= */
+
+  function cardTilt() {
+    const cards = document.querySelectorAll(".card");
+
+    cards.forEach((card) => {
+      if (card.dataset.floralTilt) return;
+
+      card.dataset.floralTilt = "true";
+
+      card.addEventListener(
+        "pointermove",
+        (event) => {
+          if (window.innerWidth < 768) return;
+
+          if (
+            event.pointerType &&
+            event.pointerType !== "mouse"
+          ) {
+            return;
+          }
+
+          const rect =
+            card.getBoundingClientRect();
+
+          const x =
+            (event.clientX - rect.left) /
+            rect.width;
+
+          const y =
+            (event.clientY - rect.top) /
+            rect.height;
+
+          const rotateX =
+            (0.5 - y) * 6;
+
+          const rotateY =
+            (x - 0.5) * 6;
+
+          card.style.transform =
+            `perspective(900px)
+             rotateX(${rotateX}deg)
+             rotateY(${rotateY}deg)
+             translateY(-4px)`;
+
+          card.classList.add(
+            "fx-hover"
+          );
+        },
+        { passive: true }
+      );
+
+      card.addEventListener(
+        "pointerleave",
+        () => {
+          card.style.transform = "";
+
+          card.classList.remove(
+            "fx-hover"
+          );
+        }
+      );
+    });
+  }
+
+  /* =========================================================
+     7. Hover Interaction
+     ========================================================= */
+
+  function hoverEffects() {
+    const elements =
+      document.querySelectorAll(
+        "a, button, .btn, .card"
+      );
+
+    elements.forEach((element) => {
+      element.addEventListener(
+        "pointerenter",
+        () => {
+          element.classList.add(
+            "floral-hover-active"
+          );
+        }
+      );
+
+      element.addEventListener(
+        "pointerleave",
+        () => {
+          element.classList.remove(
+            "floral-hover-active"
+          );
+        }
+      );
+    });
+  }
+
+  /* =========================================================
+     8. Scroll Reveal
+     ========================================================= */
+
+  function scrollReveal() {
+    const elements =
+      document.querySelectorAll(
+        ".card, .timeline-item, .section-title"
+      );
+
+    if (!("IntersectionObserver" in window)) {
+      return;
+    }
+
+    elements.forEach((element) => {
+      element.classList.add(
+        "scroll-reveal"
+      );
+    });
+
+    const observer =
+      new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add(
+                "is-visible"
+              );
+
+              observer.unobserve(
+                entry.target
+              );
+            }
+          });
+        },
+        {
+          threshold: 0.12
+        }
+      );
+
+    elements.forEach((element) => {
+      observer.observe(element);
+    });
+  }
+
+  /* =========================================================
+     9. Smooth Scroll
+     ========================================================= */
+
+  function smoothScroll() {
+    document.documentElement.style.scrollBehavior =
+      "smooth";
+  }
+
+  /* =========================================================
+     10. Cursor Glow
+     ========================================================= */
+
+  function cursorGlow() {
+    if (window.innerWidth < 768) return;
+
+    const glow =
+      document.createElement("div");
+
+    glow.className =
+      "floral-cursor-glow";
+
+    glow.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+    document.body.appendChild(glow);
+
+    let x = -200;
+    let y = -200;
+
+    let targetX = -200;
+    let targetY = -200;
+
+    window.addEventListener(
+      "pointermove",
+      (event) => {
+        targetX = event.clientX;
+        targetY = event.clientY;
+      },
+      { passive: true }
+    );
+
+    function animate() {
+      x += (targetX - x) * 0.12;
+      y += (targetY - y) * 0.12;
+
+      glow.style.left = ${x}px;
+      glow.style.top = ${y}px;
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  }
+
+  /* =========================================================
+     11. Initialize
+     ========================================================= */
+
+  function init() {
+    createAtmosphere();
+
+    if (prefersReducedMotion) {
+      smoothScroll();
+      return;
+    }
+
+    createPetals();
+    windEffect();
+    mouseParallax();
+    cardTilt();
+    hoverEffects();
+    scrollReveal();
+    smoothScroll();
+    cursorGlow();
+
+    console.log(
+      "🌸 Floral Dream Effects activated!"
+    );
+  }
+
+  if (
+    document.readyState === "loading"
+  ) {
+    document.addEventListener(
+      "DOMContentLoaded",
+      init
+    );
+  } else {
+    init();
+  }
+
+})();
