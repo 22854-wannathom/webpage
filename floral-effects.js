@@ -1,4 +1,3 @@
-```javascript
 (() => {
   "use strict";
 
@@ -86,9 +85,11 @@
       const petal = document.createElement("span");
 
       petal.className = "floral-petal";
-      petal.textContent = symbols[i % symbols.length];
+      petal.textContent =
+        symbols[i % symbols.length];
 
-      petal.style.left = `${Math.random() * 100}%`;
+      petal.style.left =
+        `${Math.random() * 100}%`;
 
       petal.style.animationDelay =
         `${Math.random() * 12}s`;
@@ -352,6 +353,7 @@
       typeof media.addListener === "function"
     ) {
       media.addListener(
+        "change",
         applyReducedMotion
       );
     }
@@ -366,11 +368,6 @@
 
     accessibility();
 
-    /*
-     * Respect reduced-motion preference.
-     * Decorative static effects can still be created,
-     * but continuous motion is skipped.
-     */
     const reducedMotion =
       window.matchMedia(
         "(prefers-reduced-motion: reduce)"
@@ -407,4 +404,3 @@
   }
 
 })();
-```
