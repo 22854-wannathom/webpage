@@ -5,12 +5,12 @@
 
 :root {
   --floral-wind: 0px;
-  --mouse-x: 0px;
-  --mouse-y: 0px;
+  --floral-parallax-x: 0px;
+  --floral-parallax-y: 0px;
 }
 
 /* =========================================================
-   Atmospheric Background
+   Atmospheric background
    ========================================================= */
 
 .floral-atmosphere {
@@ -18,63 +18,78 @@
   inset: 0;
   z-index: -1;
   pointer-events: none;
+  overflow: hidden;
 
   background:
     radial-gradient(
       circle at 20% 20%,
-      rgba(255, 182, 193, 0.12),
+      rgba(255, 182, 193, 0.10),
       transparent 35%
     ),
     radial-gradient(
       circle at 80% 30%,
       rgba(255, 214, 224, 0.10),
       transparent 35%
-    ),
-    radial-gradient(
-      circle at 50% 80%,
-      rgba(221, 160, 221, 0.08),
-      transparent 40%
     );
 
-  opacity: 0.9;
+  animation: floralAtmosphere 12s ease-in-out infinite alternate;
+}
+
+@keyframes floralAtmosphere {
+  from {
+    opacity: 0.65;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* =========================================================
-   Floating Petals
+   Floating petals
    ========================================================= */
 
 .floral-petals {
   position: fixed;
   inset: 0;
-  z-index: 9990;
-
+  z-index: 9998;
   pointer-events: none;
   overflow: hidden;
 }
 
 .floral-petal {
   position: absolute;
-  top: -10vh;
+  top: -50px;
 
   display: block;
 
   user-select: none;
   pointer-events: none;
 
-  animation-name: floralPetalFall;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
+  filter:
+    drop-shadow(
+      0 2px 4px rgba(255, 105, 150, 0.18)
+    );
 
-  transform: translate3d(0, 0, 0);
-  will-change: transform;
+  animation:
+    floralFall
+    linear
+    infinite;
+
+  will-change:
+    transform,
+    opacity;
+
+  transform:
+    translateX(var(--floral-wind));
 }
 
-@keyframes floralPetalFall {
+@keyframes floralFall {
   0% {
     transform:
       translate3d(
-        calc(var(--floral-wind) * -1),
-        -10vh,
+        0,
+        -60px,
         0
       )
       rotate(0deg);
@@ -83,7 +98,7 @@
   25% {
     transform:
       translate3d(
-        calc(var(--floral-wind) + 3vw),
+        calc(var(--floral-wind) * 0.5),
         25vh,
         0
       )
@@ -93,8 +108,8 @@
   50% {
     transform:
       translate3d(
-        calc(var(--floral-wind) * -0.5 - 2vw),
-        55vh,
+        var(--floral-wind),
+        50vh,
         0
       )
       rotate(180deg);
@@ -103,8 +118,8 @@
   75% {
     transform:
       translate3d(
-        calc(var(--floral-wind) + 2vw),
-        80vh,
+        calc(var(--floral-wind) * -0.4),
+        75vh,
         0
       )
       rotate(270deg);
@@ -113,8 +128,8 @@
   100% {
     transform:
       translate3d(
-        calc(var(--floral-wind) * -1),
-        115vh,
+        var(--floral-wind),
+        110vh,
         0
       )
       rotate(360deg);
@@ -122,79 +137,83 @@
 }
 
 /* =========================================================
-   Interactive Hover
+   Interactive elements
+   ========================================================= */
+
+.floral-interactive {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+}
+
+.floral-interactive:hover {
+  filter:
+    brightness(1.04);
+}
+
+/* =========================================================
+   Hover effect
    ========================================================= */
 
 .floral-hover-active {
+  filter:
+    brightness(1.05)
+    saturate(1.05);
+
   transition:
-    transform 0.25s ease,
     filter 0.25s ease,
     box-shadow 0.25s ease;
 }
 
-.floral-hover-active:hover {
-  filter:
-    brightness(1.04)
-    saturate(1.05);
-}
-
 /* =========================================================
-   Card Tilt
+   Card tilt
    ========================================================= */
 
-.card {
+.card,
+.box,
+article,
+.project,
+.project-card {
+  transform:
+    translate3d(
+      var(--floral-parallax-x),
+      var(--floral-parallax-y),
+      0
+    );
   transform-style: preserve-3d;
+}
+
+.floral-tilting {
   transition:
-    transform 0.25s ease,
     box-shadow 0.25s ease;
-  will-change: transform;
-}
 
-.card.fx-hover {
   box-shadow:
-    0 18px 45px
-    rgba(80, 35, 65, 0.16);
+    0 15px 35px
+    rgba(255, 105, 150, 0.16);
 }
 
 /* =========================================================
-   Scroll Reveal
+   Soft glow
    ========================================================= */
 
-.scroll-reveal {
-  opacity: 0;
-  transform:
-    translateY(24px);
-
-  transition:
-    opacity 0.8s ease,
-    transform 0.8s ease;
-}
-
-.scroll-reveal.is-visible {
-  opacity: 1;
-
-  transform:
-    translateY(0);
-}
-
-/* =========================================================
-   Section Titles
-   ========================================================= */
-
-.section-title {
-  transition:
-    text-shadow 0.35s ease,
-    transform 0.35s ease;
-}
-
-.section-title:hover {
+.floral-soft-glow {
   text-shadow:
-    0 0 18px
-    rgba(255, 182, 193, 0.45);
+    0 0 8px rgba(255, 182, 193, 0.25),
+    0 0 18px rgba(255, 182, 193, 0.12);
+
+  transition:
+    text-shadow 0.3s ease;
+}
+
+.floral-soft-glow:hover {
+  text-shadow:
+    0 0 10px rgba(255, 150, 180, 0.40),
+    0 0 24px rgba(255, 182, 193, 0.20);
 }
 
 /* =========================================================
-   Cursor Glow
+   Cursor glow
    ========================================================= */
 
 .floral-cursor-glow {
@@ -210,7 +229,7 @@
 
   pointer-events: none;
 
-  z-index: 9999;
+  z-index: 9997;
 
   background:
     radial-gradient(
@@ -230,18 +249,16 @@
 }
 
 /* =========================================================
-   Reduced Motion
+   Reduced motion
    ========================================================= */
 
 .floral-reduced-motion *,
 .floral-reduced-motion *::before,
 .floral-reduced-motion *::after {
-  animation-duration: 0.001ms !important;
+  animation-duration: 0.01ms !important;
   animation-iteration-count: 1 !important;
-
+  transition-duration: 0.01ms !important;
   scroll-behavior: auto !important;
-
-  transition-duration: 0.001ms !important;
 }
 
 .floral-reduced-motion .floral-petals,
@@ -258,13 +275,12 @@
     display: none;
   }
 
-  .card {
-    transform: none !important;
+  .floral-atmosphere {
+    animation: none;
   }
 
-  .scroll-reveal {
-    transform:
-      translateY(12px);
+  .floral-petal {
+    animation-duration: 12s;
   }
 }
 
@@ -273,17 +289,12 @@
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .floral-petals,
+  .floral-atmosphere,
+  .floral-petal {
+    animation: none !important;
+  }
+
   .floral-cursor-glow {
     display: none !important;
-  }
-
-  .scroll-reveal {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-
-  html {
-    scroll-behavior: auto !important;
   }
 }
