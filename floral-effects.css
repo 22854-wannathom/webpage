@@ -1,656 +1,99 @@
 /* =========================================================
-   🌸 FLORAL DREAM
-   Premium Floral Portfolio Effects
+   FLORAL DREAM — interactive atmosphere layer
+   Works as a progressive enhancement on the original site.
    ========================================================= */
-
 :root {
-
-    --floral-pink: #f7a8c4;
-    --floral-pink-soft: #fde3ec;
-
-    --floral-purple: #c8b6e8;
-    --floral-purple-soft: #eee7fa;
-
+    --floral-pink: #e9a8c7;
+    --floral-pink-deep: #c86b9d;
+    --floral-purple: #c9b8e8;
     --floral-green: #a8c9a0;
-
-    --floral-white: rgba(255, 255, 255, 0.72);
-
     --floral-wind: 0px;
-
     --parallax-x: 0px;
     --parallax-y: 0px;
-
     --rotate-x: 0deg;
     --rotate-y: 0deg;
 }
 
-
-/* =========================================================
-   Base atmosphere
-   ========================================================= */
-
-body {
-
-    position: relative;
-
-    background:
-        radial-gradient(
-            circle at 10% 10%,
-            rgba(255, 190, 215, 0.22),
-            transparent 32%
-        ),
-
-        radial-gradient(
-            circle at 90% 15%,
-            rgba(205, 185, 240, 0.22),
-            transparent 30%
-        ),
-
-        radial-gradient(
-            circle at 50% 90%,
-            rgba(180, 220, 180, 0.16),
-            transparent 35%
-        );
-
-}
-
-
-/* =========================================================
-   Dreamy background layer
-   ========================================================= */
-
 .floral-atmosphere {
-
     position: fixed;
-
-    inset: 0;
-
-    z-index: -10;
-
+    inset: -10%;
+    z-index: -4;
     pointer-events: none;
-
     overflow: hidden;
-
     background:
-
-        radial-gradient(
-            circle at 20% 30%,
-            rgba(255, 170, 200, 0.14),
-            transparent 28%
-        ),
-
-        radial-gradient(
-            circle at 80% 20%,
-            rgba(190, 165, 235, 0.14),
-            transparent 30%
-        ),
-
-        radial-gradient(
-            circle at 50% 80%,
-            rgba(160, 205, 165, 0.10),
-            transparent 30%
-        );
-
-    animation:
-        floral-breathe 12s
-        ease-in-out
-        infinite
-        alternate;
+        radial-gradient(circle at 18% 30%, rgba(255,176,207,.18), transparent 27%),
+        radial-gradient(circle at 82% 22%, rgba(198,178,233,.18), transparent 30%),
+        radial-gradient(circle at 52% 82%, rgba(155,198,149,.13), transparent 29%);
+    animation: floral-breathe 14s ease-in-out infinite alternate;
 }
-
-
-@keyframes floral-breathe {
-
-    0% {
-        opacity: 0.65;
-        transform: scale(1);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1.04);
-    }
+.floral-atmosphere::before,
+.floral-atmosphere::after {
+    content: '';
+    position:absolute;
+    width:35vw; height:35vw; min-width:260px; min-height:260px;
+    border-radius:50%;
+    filter:blur(45px);
+    opacity:.45;
 }
+.floral-atmosphere::before { left:-12%; top:34%; background:rgba(255,192,215,.23); }
+.floral-atmosphere::after { right:-12%; bottom:12%; background:rgba(183,214,173,.18); }
+@keyframes floral-breathe { from{transform:scale(1);opacity:.72} to{transform:scale(1.035);opacity:1} }
 
-
-/* =========================================================
-   Floating petals
-   ========================================================= */
-
-.floral-petals {
-
-    position: fixed;
-
-    inset: 0;
-
-    z-index: 50;
-
-    pointer-events: none;
-
-    overflow: hidden;
-}
-
-
+.floral-petals { position:fixed; inset:0; z-index:50; pointer-events:none; overflow:hidden; }
 .floral-petal {
-
-    position: absolute;
-
-    top: -60px;
-
-    display: block;
-
-    user-select: none;
-
-    pointer-events: none;
-
-    filter:
-        drop-shadow(
-            0 4px 7px
-            rgba(230, 110, 160, 0.20)
-        );
-
-    will-change:
-        transform,
-        opacity;
-
-    animation:
-        floral-fall
-        linear
-        infinite;
+    position:absolute; top:-55px; left:0; display:block; user-select:none; pointer-events:none;
+    will-change:transform,opacity; filter:drop-shadow(0 5px 7px rgba(180,90,135,.18));
+    animation:floral-fall linear infinite;
 }
-
-
 @keyframes floral-fall {
-
-    0% {
-
-        transform:
-            translate3d(
-                0,
-                -70px,
-                0
-            )
-            rotate(0deg);
-
-        opacity: 0;
-    }
-
-
-    10% {
-
-        opacity: 1;
-    }
-
-
-    50% {
-
-        transform:
-            translate3d(
-                calc(
-                    var(--petal-drift)
-                    +
-                    var(--floral-wind)
-                ),
-                55vh,
-                0
-            )
-            rotate(
-                calc(
-                    var(--petal-rotate)
-                    * 0.5
-                )
-            );
-    }
-
-
-    100% {
-
-        transform:
-            translate3d(
-                calc(
-                    var(--petal-drift)
-                    +
-                    var(--floral-wind)
-                ),
-                115vh,
-                0
-            )
-            rotate(
-                var(--petal-rotate)
-            );
-
-        opacity: 0;
-    }
+    0% { transform:translate3d(0,-70px,0) rotate(0deg) scale(.8); opacity:0; }
+    9% { opacity:1; }
+    50% { transform:translate3d(calc(var(--petal-drift) + var(--floral-wind)),55vh,0) rotate(calc(var(--petal-rotate) * .5)) scale(1); }
+    100% { transform:translate3d(calc(var(--petal-drift) + var(--floral-wind)),115vh,0) rotate(var(--petal-rotate)) scale(.85); opacity:0; }
 }
-
-
-/* =========================================================
-   Cursor glow
-   ========================================================= */
 
 .floral-cursor-glow {
-
-    position: fixed;
-
-    top: 0;
-    left: 0;
-
-    width: 220px;
-    height: 220px;
-
-    margin-left: -110px;
-    margin-top: -110px;
-
-    border-radius: 50%;
-
-    pointer-events: none;
-
-    z-index: 49;
-
-    background:
-
-        radial-gradient(
-            circle,
-
-            rgba(
-                255,
-                180,
-                210,
-                0.20
-            ) 0%,
-
-            rgba(
-                210,
-                190,
-                240,
-                0.10
-            ) 35%,
-
-            transparent 70%
-        );
-
-    filter: blur(8px);
-
-    mix-blend-mode: screen;
-
-    will-change:
-        transform;
+    position:fixed; left:0; top:0; width:260px; height:260px; margin:-130px 0 0 -130px;
+    border-radius:50%; pointer-events:none; z-index:49;
+    background:radial-gradient(circle, rgba(255,183,211,.23), rgba(207,190,238,.10) 35%, transparent 70%);
+    filter:blur(8px); mix-blend-mode:screen; will-change:transform;
 }
-
-
-/* =========================================================
-   Glass cards
-   ========================================================= */
-
-.card {
-
-    position: relative;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255,255,255,0.76),
-            rgba(255,255,255,0.50)
-        );
-
-    border:
-        1px solid
-        rgba(255,255,255,0.68);
-
-    box-shadow:
-
-        0 12px 40px
-        rgba(180, 120, 160, 0.10),
-
-        inset 0 1px 0
-        rgba(255,255,255,0.75);
-
-    backdrop-filter:
-        blur(14px);
-
-    -webkit-backdrop-filter:
-        blur(14px);
-
-    transition:
-
-        transform 0.45s
-        cubic-bezier(.2,.8,.2,1),
-
-        box-shadow 0.35s ease,
-
-        border-color 0.35s ease;
-}
-
-
-/* =========================================================
-   Tilt cards
-   ========================================================= */
 
 [data-tilt] {
-
-    transform:
-
-        perspective(900px)
-
-        rotateX(var(--rotate-x))
-        rotateY(var(--rotate-y));
-
-    transform-style: preserve-3d;
-
-    will-change:
-        transform;
+    transform:perspective(950px) rotateX(var(--rotate-x)) rotateY(var(--rotate-y));
+    transform-style:preserve-3d;
+    will-change:transform;
 }
-
-
-[data-tilt].floral-tilting {
-
-    box-shadow:
-
-        0 20px 50px
-        rgba(210, 120, 170, 0.20),
-
-        0 0 0 1px
-        rgba(255,255,255,0.45);
-
-}
-
-
-/* =========================================================
-   Card shine
-   ========================================================= */
-
+[data-tilt]:hover { transform:perspective(950px) rotateX(var(--rotate-x)) rotateY(var(--rotate-y)); }
+[data-tilt].floral-tilting { box-shadow:0 24px 55px rgba(180,100,150,.18), 0 0 0 1px rgba(255,255,255,.35); }
 [data-tilt]::after {
-
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    border-radius: inherit;
-
-    pointer-events: none;
-
-    background:
-
-        linear-gradient(
-            120deg,
-            transparent 25%,
-            rgba(255,255,255,0.30),
-            transparent 55%
-        );
-
-    opacity: 0;
-
-    transform:
-        translateX(-100%);
-
-    transition:
-        opacity 0.35s ease;
+    content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background:linear-gradient(115deg,transparent 25%,rgba(255,255,255,.28) 45%,transparent 60%);
+    opacity:0; transform:translateX(-110%);
 }
+[data-tilt].floral-tilting::after { opacity:1; animation:card-shine .8s ease; }
+@keyframes card-shine { to { transform:translateX(110%); } }
 
+[data-parallax] { will-change:transform; }
+.floral-interactive { transition:transform .28s ease, box-shadow .28s ease, color .28s ease, background .28s ease; }
+.floral-nav-hover { color:var(--floral-pink-deep) !important; }
 
-[data-tilt]:hover::after {
+[data-reveal] { opacity:0; transform:translateY(25px); transition:opacity .75s ease, transform .75s cubic-bezier(.2,.8,.2,1); }
+[data-reveal].is-visible { opacity:1; transform:translateY(0); }
 
-    opacity: 1;
+.floral-scroll-progress { position:fixed; top:0; left:0; height:3px; width:0; z-index:2000; background:linear-gradient(90deg,#e9a8c7,#bba8dc,#a8c9a0); box-shadow:0 0 12px rgba(200,107,157,.4); pointer-events:none; }
 
-    animation:
-        card-shine
-        0.9s
-        ease;
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior:auto !important; }
+    *,*::before,*::after { animation:none !important; transition:none !important; }
+    .floral-petals,.floral-cursor-glow,.floral-scroll-progress { display:none !important; }
+    [data-reveal] { opacity:1 !important; transform:none !important; }
 }
-
-
-@keyframes card-shine {
-
-    from {
-        transform:
-            translateX(-100%);
-    }
-
-    to {
-        transform:
-            translateX(100%);
-    }
+@media (pointer:coarse) {
+    .floral-cursor-glow { display:none; }
+    [data-tilt] { transform:none !important; }
 }
-
-
-/* =========================================================
-   Buttons / links
-   ========================================================= */
-
-.floral-interactive {
-
-    transition:
-
-        transform 0.25s
-        ease,
-
-        box-shadow 0.25s
-        ease,
-
-        color 0.25s
-        ease,
-
-        background 0.25s
-        ease;
-}
-
-
-.floral-interactive:hover {
-
-    transform:
-        translateY(-2px);
-}
-
-
-/* =========================================================
-   Navigation
-   ========================================================= */
-
-.nav-links a {
-
-    position: relative;
-}
-
-
-.nav-links a::after {
-
-    content: "";
-
-    position: absolute;
-
-    left: 50%;
-    bottom: -5px;
-
-    width: 0;
-    height: 2px;
-
-    border-radius: 99px;
-
-    background:
-        linear-gradient(
-            90deg,
-            var(--floral-pink),
-            var(--floral-purple)
-        );
-
-    transform:
-        translateX(-50%);
-
-    transition:
-        width 0.3s ease;
-}
-
-
-.nav-links a:hover::after,
-.nav-links a.active::after {
-
-    width: 70%;
-}
-
-
-.floral-nav-hover {
-
-    color:
-        var(--floral-pink) !important;
-}
-
-
-/* =========================================================
-   Soft glow
-   ========================================================= */
-
-h1,
-h2 {
-
-    text-shadow:
-
-        0 0 20px
-        rgba(245, 160, 195, 0.14);
-}
-
-
-.highlight {
-
-    text-shadow:
-
-        0 0 22px
-        rgba(245, 150, 195, 0.25);
-}
-
-
-/* =========================================================
-   Scroll reveal
-   ========================================================= */
-
-[data-reveal] {
-
-    opacity: 0;
-
-    transform:
-        translateY(28px);
-
-    transition:
-
-        opacity 0.8s
-        ease,
-
-        transform 0.8s
-        cubic-bezier(.2,.8,.2,1);
-}
-
-
-[data-reveal].is-visible {
-
-    opacity: 1;
-
-    transform:
-        translateY(0);
-}
-
-
-/* stagger */
-
-[data-reveal]:nth-child(2) {
-    transition-delay: 0.08s;
-}
-
-[data-reveal]:nth-child(3) {
-    transition-delay: 0.16s;
-}
-
-[data-reveal]:nth-child(4) {
-    transition-delay: 0.24s;
-}
-
-
-/* =========================================================
-   Decorative floating elements
-   ========================================================= */
-
-[data-parallax] {
-
-    transform:
-
-        translate3d(
-            var(--parallax-x),
-            var(--parallax-y),
-            0
-        );
-
-    transition:
-        transform 0.15s
-        ease-out;
-}
-
-
-/* =========================================================
-   Accessibility
-   ========================================================= */
-
-@media
-(prefers-reduced-motion: reduce) {
-
-    html {
-        scroll-behavior: auto !important;
-    }
-
-    *,
-    *::before,
-    *::after {
-
-        animation:
-            none !important;
-
-        transition:
-            none !important;
-    }
-
-    .floral-petals,
-    .floral-cursor-glow {
-
-        display: none !important;
-    }
-
-    [data-reveal] {
-
-        opacity: 1 !important;
-
-        transform:
-            none !important;
-    }
-}
-
-
-/* =========================================================
-   Mobile
-   ========================================================= */
-
-@media (max-width: 767px) {
-
-    .floral-cursor-glow {
-        display: none;
-    }
-
-    .floral-atmosphere {
-        animation: none;
-    }
-
-    .floral-petal {
-        animation-duration: 13s;
-    }
-
-    [data-tilt] {
-
-        transform:
-            none !important;
-    }
-
-    [data-parallax] {
-
-        transform:
-            none;
-    }
-
+@media (max-width:767px) {
+    .floral-petal { animation-duration:13s; }
+    .floral-atmosphere { animation-duration:18s; }
 }

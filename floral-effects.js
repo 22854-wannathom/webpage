@@ -1,536 +1,184 @@
 (() => {
-    "use strict";
-
-    /* =========================================================
-       🌸 FLORAL DREAM
-       Personal Portfolio Interaction Engine
-       ========================================================= */
+    'use strict';
 
     const root = document.documentElement;
-
-    /* ---------------------------------------------------------
-       1. Create atmosphere
-       --------------------------------------------------------- */
+    const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const coarse = () => window.matchMedia('(pointer: coarse)').matches;
 
     function createAtmosphere() {
-        if (document.querySelector(".floral-atmosphere")) return;
-
-        const atmosphere = document.createElement("div");
-
-        atmosphere.className = "floral-atmosphere";
-        atmosphere.setAttribute("aria-hidden", "true");
-
-        document.body.prepend(atmosphere);
+        if (document.querySelector('.floral-atmosphere')) return;
+        const el = document.createElement('div');
+        el.className = 'floral-atmosphere';
+        el.setAttribute('aria-hidden', 'true');
+        document.body.prepend(el);
     }
 
-
-    /* ---------------------------------------------------------
-       2. Create floating petals
-       --------------------------------------------------------- */
+    function createProgress() {
+        if (document.querySelector('.floral-scroll-progress')) return;
+        const bar = document.createElement('div');
+        bar.className = 'floral-scroll-progress';
+        bar.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(bar);
+        const update = () => {
+            const max = document.documentElement.scrollHeight - window.innerHeight;
+            bar.style.width = `${max > 0 ? (window.scrollY / max) * 100 : 0}%`;
+        };
+        window.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', update, { passive: true });
+        update();
+    }
 
     function createPetals() {
-        if (document.querySelector(".floral-petals")) return;
-
-        const container = document.createElement("div");
-
-        container.className = "floral-petals";
-        container.setAttribute("aria-hidden", "true");
-
-        const symbols = [
-            "🌸",
-            "✿",
-            "❀",
-            "🌷",
-            "🍃"
-        ];
-
-        const isMobile = window.innerWidth < 768;
-
-        const count = isMobile ? 10 : 20;
-
+        if (document.querySelector('.floral-petals')) return;
+        const container = document.createElement('div');
+        container.className = 'floral-petals';
+        container.setAttribute('aria-hidden', 'true');
+        const symbols = ['🌸', '✿', '❀', '🌷', '🍃'];
+        const count = window.innerWidth < 600 ? 9 : window.innerWidth < 900 ? 14 : 22;
+        const frag = document.createDocumentFragment();
         for (let i = 0; i < count; i++) {
-
-            const petal = document.createElement("span");
-
-            petal.className = "floral-petal";
-
-            petal.textContent =
-                symbols[Math.floor(Math.random() * symbols.length)];
-
-            petal.style.left =
-                `${Math.random() * 100}%`;
-
-            petal.style.animationDelay =
-                `${Math.random() * 12}s`;
-
-            petal.style.animationDuration =
-                `${9 + Math.random() * 9}s`;
-
-            petal.style.fontSize =
-                `${12 + Math.random() * 14}px`;
-
-            petal.style.opacity =
-                `${0.25 + Math.random() * 0.45}`;
-
-            petal.style.setProperty(
-                "--petal-drift",
-                `${-80 + Math.random() * 160}px`
-            );
-
-            petal.style.setProperty(
-                "--petal-rotate",
-                `${180 + Math.random() * 360}deg`
-            );
-
-            container.appendChild(petal);
+            const petal = document.createElement('span');
+            petal.className = 'floral-petal';
+            petal.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            petal.style.left = `${Math.random() * 100}%`;
+            petal.style.animationDelay = `${Math.random() * -18}s`;
+            petal.style.animationDuration = `${10 + Math.random() * 11}s`;
+            petal.style.fontSize = `${11 + Math.random() * 15}px`;
+            petal.style.opacity = `${0.25 + Math.random() * 0.42}`;
+            petal.style.setProperty('--petal-drift', `${-110 + Math.random() * 220}px`);
+            petal.style.setProperty('--petal-rotate', `${180 + Math.random() * 540}deg`);
+            frag.appendChild(petal);
         }
-
+        container.appendChild(frag);
         document.body.appendChild(container);
     }
 
-
-    /* ---------------------------------------------------------
-       3. Cursor glow
-       --------------------------------------------------------- */
-
     function createCursorGlow() {
-
-        if (
-            window.matchMedia("(pointer: coarse)").matches
-        ) {
-            return;
-        }
-
-        if (document.querySelector(".floral-cursor-glow")) {
-            return;
-        }
-
-        const glow = document.createElement("div");
-
-        glow.className = "floral-cursor-glow";
-
-        glow.setAttribute("aria-hidden", "true");
-
+        if (coarse() || reduceMotion() || document.querySelector('.floral-cursor-glow')) return;
+        const glow = document.createElement('div');
+        glow.className = 'floral-cursor-glow';
+        glow.setAttribute('aria-hidden', 'true');
         document.body.appendChild(glow);
-
-        let currentX = window.innerWidth / 2;
-        let currentY = window.innerHeight / 2;
-
-        let targetX = currentX;
-        let targetY = currentY;
-
-        window.addEventListener(
-            "mousemove",
-            (event) => {
-
-                targetX = event.clientX;
-                targetY = event.clientY;
-
-            },
-            { passive: true }
-        );
-
-        function animateGlow() {
-
-            currentX +=
-                (targetX - currentX) * 0.12;
-
-            currentY +=
-                (targetY - currentY) * 0.12;
-
-            glow.style.transform =
-                `translate3d(${currentX}px, ${currentY}px, 0)`;
-
-            requestAnimationFrame(animateGlow);
-        }
-
-        animateGlow();
-    }
-
-
-    /* ---------------------------------------------------------
-       4. Wind effect
-       --------------------------------------------------------- */
-
-    function windEffect() {
-
-        let targetWind = 0;
-        let currentWind = 0;
-
-        window.addEventListener(
-            "mousemove",
-            (event) => {
-
-                const position =
-                    event.clientX / window.innerWidth;
-
-                targetWind =
-                    (position - 0.5) * 2;
-
-            },
-            { passive: true }
-        );
-
-        function animateWind() {
-
-            currentWind +=
-                (targetWind - currentWind) * 0.04;
-
-            root.style.setProperty(
-                "--floral-wind",
-                `${currentWind * 35}px`
-            );
-
-            requestAnimationFrame(animateWind);
-        }
-
-        animateWind();
-    }
-
-
-    /* ---------------------------------------------------------
-       5. Mouse parallax
-       --------------------------------------------------------- */
-
-    function mouseParallax() {
-
-        if (
-            window.matchMedia("(pointer: coarse)").matches
-        ) {
-            return;
-        }
-
-        const elements =
-            document.querySelectorAll(
-                "[data-parallax]"
-            );
-
-        if (!elements.length) return;
-
-        let mouseX = 0;
-        let mouseY = 0;
-
-        window.addEventListener(
-            "mousemove",
-            (event) => {
-
-                mouseX =
-                    event.clientX /
-                    window.innerWidth -
-                    0.5;
-
-                mouseY =
-                    event.clientY /
-                    window.innerHeight -
-                    0.5;
-
-            },
-            { passive: true }
-        );
-
-        function animate() {
-
-            elements.forEach((element) => {
-
-                const strength =
-                    Number(
-                        element.dataset.parallax
-                    ) || 8;
-
-                const x =
-                    mouseX * strength;
-
-                const y =
-                    mouseY * strength;
-
-                element.style.setProperty(
-                    "--parallax-x",
-                    `${x}px`
-                );
-
-                element.style.setProperty(
-                    "--parallax-y",
-                    `${y}px`
-                );
-            });
-
+        let x = innerWidth / 2, y = innerHeight / 2, tx = x, ty = y;
+        window.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; }, { passive:true });
+        const animate = () => {
+            x += (tx - x) * .11; y += (ty - y) * .11;
+            glow.style.transform = `translate3d(${x}px,${y}px,0)`;
             requestAnimationFrame(animate);
-        }
-
+        };
         animate();
     }
 
+    function windEffect() {
+        let target = 0, current = 0;
+        window.addEventListener('mousemove', e => {
+            const x = e.clientX / Math.max(innerWidth, 1) - .5;
+            target = x * 2;
+        }, { passive:true });
+        const animate = () => {
+            current += (target - current) * .045;
+            root.style.setProperty('--floral-wind', `${current * 55}px`);
+            requestAnimationFrame(animate);
+        };
+        animate();
+    }
 
-    /* ---------------------------------------------------------
-       6. Card tilt
-       --------------------------------------------------------- */
+    function setupParallax() {
+        if (coarse() || reduceMotion()) return;
+        document.querySelectorAll('.hero-image-wrapper .image-bg-circle').forEach(el => el.dataset.parallax = '12');
+        document.querySelectorAll('.hero-image-wrapper .hero-img').forEach(el => el.dataset.parallax = '5');
+        document.querySelectorAll('.hero-content .badge').forEach(el => el.dataset.parallax = '3');
+        const targets = document.querySelectorAll('[data-parallax]');
+        if (!targets.length) return;
+        let mx = 0, my = 0, x = 0, y = 0;
+        window.addEventListener('mousemove', e => {
+            mx = e.clientX / innerWidth - .5;
+            my = e.clientY / innerHeight - .5;
+        }, { passive:true });
+        const animate = () => {
+            x += (mx - x) * .06; y += (my - y) * .06;
+            targets.forEach(el => {
+                const strength = Number(el.dataset.parallax) || 8;
+                el.style.transform = `translate3d(${x * strength}px,${y * strength}px,0)`;
+            });
+            requestAnimationFrame(animate);
+        };
+        animate();
+    }
 
-    function cardTilt() {
-
-        if (
-            window.matchMedia("(pointer: coarse)").matches
-        ) {
-            return;
-        }
-
-        const cards =
-            document.querySelectorAll(
-                "[data-tilt]"
-            );
-
-        cards.forEach((card) => {
-
-            card.addEventListener(
-                "mousemove",
-                (event) => {
-
-                    const rect =
-                        card.getBoundingClientRect();
-
-                    const x =
-                        event.clientX - rect.left;
-
-                    const y =
-                        event.clientY - rect.top;
-
-                    const rotateY =
-                        ((x / rect.width) - 0.5) * 7;
-
-                    const rotateX =
-                        ((y / rect.height) - 0.5) * -7;
-
-                    card.style.setProperty(
-                        "--rotate-x",
-                        `${rotateX}deg`
-                    );
-
-                    card.style.setProperty(
-                        "--rotate-y",
-                        `${rotateY}deg`
-                    );
-
-                    card.classList.add(
-                        "floral-tilting"
-                    );
-                }
-            );
-
-            card.addEventListener(
-                "mouseleave",
-                () => {
-
-                    card.style.setProperty(
-                        "--rotate-x",
-                        "0deg"
-                    );
-
-                    card.style.setProperty(
-                        "--rotate-y",
-                        "0deg"
-                    );
-
-                    card.classList.remove(
-                        "floral-tilting"
-                    );
-                }
-            );
+    function setupTilt() {
+        if (coarse() || reduceMotion()) return;
+        document.querySelectorAll('.card').forEach(card => {
+            if (card.dataset.tiltBound) return;
+            card.dataset.tilt = '';
+            card.dataset.tiltBound = 'true';
+            card.addEventListener('mousemove', e => {
+                const r = card.getBoundingClientRect();
+                const x = (e.clientX - r.left) / r.width - .5;
+                const y = (e.clientY - r.top) / r.height - .5;
+                card.style.setProperty('--rotate-x', `${y * -5}deg`);
+                card.style.setProperty('--rotate-y', `${x * 6}deg`);
+                card.classList.add('floral-tilting');
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.setProperty('--rotate-x', '0deg');
+                card.style.setProperty('--rotate-y', '0deg');
+                card.classList.remove('floral-tilting');
+            });
         });
     }
 
-
-    /* ---------------------------------------------------------
-       7. Scroll reveal
-       --------------------------------------------------------- */
-
-    function scrollReveal() {
-
-        const elements =
-            document.querySelectorAll(
-                "[data-reveal]"
-            );
-
+    function setupReveal() {
+        const selectors = [
+            '.section-title', '.hero-content', '.hero-image-wrapper',
+            '.highlight-card', '.profile-layout > *', '.profile-details .card',
+            '.timeline-item', '.education-highlights', '.hobby-card',
+            '.contact-card', '.contact-form-card'
+        ];
+        const elements = document.querySelectorAll(selectors.join(','));
         if (!elements.length) return;
-
-        const observer =
-            new IntersectionObserver(
-                (entries) => {
-
-                    entries.forEach(
-                        (entry) => {
-
-                            if (
-                                entry.isIntersecting
-                            ) {
-
-                                entry.target.classList.add(
-                                    "is-visible"
-                                );
-
-                                observer.unobserve(
-                                    entry.target
-                                );
-                            }
-                        }
-                    );
-                },
-                {
-                    threshold: 0.12,
-                    rootMargin: "0px 0px -40px 0px"
-                }
-            );
-
-        elements.forEach(
-            (element) => {
-                observer.observe(element);
-            }
-        );
-    }
-
-
-    /* ---------------------------------------------------------
-       8. Interactive elements
-       --------------------------------------------------------- */
-
-    function interactiveElements() {
-
-        const elements =
-            document.querySelectorAll(
-                "a, button, .card, input, textarea, select"
-            );
-
-        elements.forEach(
-            (element) => {
-
-                element.classList.add(
-                    "floral-interactive"
-                );
-            }
-        );
-    }
-
-
-    /* ---------------------------------------------------------
-       9. Active link micro interaction
-       --------------------------------------------------------- */
-
-    function navigationEffect() {
-
-        const links =
-            document.querySelectorAll(
-                ".nav-links a"
-            );
-
-        links.forEach(
-            (link) => {
-
-                link.addEventListener(
-                    "mouseenter",
-                    () => {
-                        link.classList.add(
-                            "floral-nav-hover"
-                        );
-                    }
-                );
-
-                link.addEventListener(
-                    "mouseleave",
-                    () => {
-                        link.classList.remove(
-                            "floral-nav-hover"
-                        );
-                    }
-                );
-            }
-        );
-    }
-
-
-    /* ---------------------------------------------------------
-       10. Smooth scroll
-       --------------------------------------------------------- */
-
-    function smoothScroll() {
-
-        document.documentElement.style.scrollBehavior =
-            "smooth";
-    }
-
-
-    /* ---------------------------------------------------------
-       11. Accessibility
-       --------------------------------------------------------- */
-
-    function accessibility() {
-
-        const reducedMotion =
-            window.matchMedia(
-                "(prefers-reduced-motion: reduce)"
-            );
-
-        function update() {
-
-            root.classList.toggle(
-                "floral-reduced-motion",
-                reducedMotion.matches
-            );
+        elements.forEach((el, i) => {
+            el.dataset.reveal = '';
+            el.style.transitionDelay = `${Math.min((i % 4) * 70, 210)}ms`;
+        });
+        if (reduceMotion() || !('IntersectionObserver' in window)) {
+            elements.forEach(el => el.classList.add('is-visible'));
+            return;
         }
-
-        update();
-
-        reducedMotion.addEventListener(
-            "change",
-            update
-        );
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold:.1, rootMargin:'0px 0px -35px 0px' });
+        elements.forEach(el => observer.observe(el));
     }
 
-
-    /* ---------------------------------------------------------
-       Initialize
-       --------------------------------------------------------- */
+    function decorateInteractions() {
+        document.querySelectorAll('a, button').forEach(el => el.classList.add('floral-interactive'));
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('mouseenter', () => link.classList.add('floral-nav-hover'));
+            link.addEventListener('mouseleave', () => link.classList.remove('floral-nav-hover'));
+        });
+    }
 
     function init() {
-
         createAtmosphere();
-
-        createPetals();
-
-        createCursorGlow();
-
-        windEffect();
-
-        mouseParallax();
-
-        cardTilt();
-
-        scrollReveal();
-
-        interactiveElements();
-
-        navigationEffect();
-
-        smoothScroll();
-
-        accessibility();
-
-        console.log(
-            "🌸 Floral Dream initialized"
-        );
+        createProgress();
+        if (!reduceMotion()) {
+            createPetals();
+            createCursorGlow();
+            windEffect();
+            setupParallax();
+            setupTilt();
+        }
+        setupReveal();
+        decorateInteractions();
+        if (!reduceMotion()) document.documentElement.style.scrollBehavior = 'smooth';
     }
 
-
-    if (
-        document.readyState === "loading"
-    ) {
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            init
-        );
-
-    } else {
-
-        init();
-
-    }
-
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
 })();
