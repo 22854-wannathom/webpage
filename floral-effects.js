@@ -1,406 +1,536 @@
 (() => {
-  "use strict";
+    "use strict";
 
-  /* =========================================================
-     🌸 FLORAL DREAM INTERACTION ENGINE
-     9 EFFECTS • Vanilla JS • No external libraries
-     ========================================================= */
+    /* =========================================================
+       🌸 FLORAL DREAM
+       Personal Portfolio Interaction Engine
+       ========================================================= */
 
-  const CSS_FILE = "floral-effects.css";
+    const root = document.documentElement;
 
-  /* Prevent duplicate initialization */
-  if (window.__FLORAL_DREAM_INITIALIZED__) {
-    return;
-  }
+    /* ---------------------------------------------------------
+       1. Create atmosphere
+       --------------------------------------------------------- */
 
-  window.__FLORAL_DREAM_INITIALIZED__ = true;
+    function createAtmosphere() {
+        if (document.querySelector(".floral-atmosphere")) return;
 
-  /* =========================================================
-     1. Load enhancement CSS automatically
-     ========================================================= */
+        const atmosphere = document.createElement("div");
 
-  function loadFloralCSS() {
-    const existingCSS = document.querySelector(
-      `link[href="${CSS_FILE}"]`
-    );
+        atmosphere.className = "floral-atmosphere";
+        atmosphere.setAttribute("aria-hidden", "true");
 
-    if (existingCSS) return;
-
-    const link = document.createElement("link");
-
-    link.rel = "stylesheet";
-    link.href = CSS_FILE;
-
-    document.head.appendChild(link);
-  }
-
-  /* =========================================================
-     2. Atmospheric background
-     ========================================================= */
-
-  function createAtmosphere() {
-    if (document.querySelector(".floral-atmosphere")) {
-      return;
+        document.body.prepend(atmosphere);
     }
 
-    const layer = document.createElement("div");
 
-    layer.className = "floral-atmosphere";
-    layer.setAttribute("aria-hidden", "true");
+    /* ---------------------------------------------------------
+       2. Create floating petals
+       --------------------------------------------------------- */
 
-    document.body.prepend(layer);
-  }
+    function createPetals() {
+        if (document.querySelector(".floral-petals")) return;
 
-  /* =========================================================
-     3. Floating petals
-     ========================================================= */
+        const container = document.createElement("div");
 
-  function createPetals() {
-    if (document.querySelector(".floral-petals")) {
-      return;
-    }
+        container.className = "floral-petals";
+        container.setAttribute("aria-hidden", "true");
 
-    const container = document.createElement("div");
+        const symbols = [
+            "🌸",
+            "✿",
+            "❀",
+            "🌷",
+            "🍃"
+        ];
 
-    container.className = "floral-petals";
-    container.setAttribute("aria-hidden", "true");
+        const isMobile = window.innerWidth < 768;
 
-    const symbols = [
-      "🌸",
-      "✿",
-      "❀",
-      "🌷",
-      "🍃"
-    ];
+        const count = isMobile ? 10 : 20;
 
-    const count = Math.min(
-      28,
-      Math.max(
-        14,
-        Math.floor(window.innerWidth / 45)
-      )
-    );
+        for (let i = 0; i < count; i++) {
 
-    for (let i = 0; i < count; i++) {
-      const petal = document.createElement("span");
+            const petal = document.createElement("span");
 
-      petal.className = "floral-petal";
-      petal.textContent =
-        symbols[i % symbols.length];
+            petal.className = "floral-petal";
 
-      petal.style.left =
-        `${Math.random() * 100}%`;
+            petal.textContent =
+                symbols[Math.floor(Math.random() * symbols.length)];
 
-      petal.style.animationDelay =
-        `${Math.random() * 12}s`;
+            petal.style.left =
+                `${Math.random() * 100}%`;
 
-      petal.style.animationDuration =
-        `${8 + Math.random() * 10}s`;
+            petal.style.animationDelay =
+                `${Math.random() * 12}s`;
 
-      petal.style.fontSize =
-        `${12 + Math.random() * 14}px`;
+            petal.style.animationDuration =
+                `${9 + Math.random() * 9}s`;
 
-      petal.style.opacity =
-        `${0.25 + Math.random() * 0.55}`;
+            petal.style.fontSize =
+                `${12 + Math.random() * 14}px`;
 
-      container.appendChild(petal);
-    }
+            petal.style.opacity =
+                `${0.25 + Math.random() * 0.45}`;
 
-    document.body.appendChild(container);
-  }
+            petal.style.setProperty(
+                "--petal-drift",
+                `${-80 + Math.random() * 160}px`
+            );
 
-  /* =========================================================
-     4. Wind effect
-     ========================================================= */
+            petal.style.setProperty(
+                "--petal-rotate",
+                `${180 + Math.random() * 360}deg`
+            );
 
-  function windEffect() {
-    let windX = 0;
-    let targetWind = 0;
-
-    window.addEventListener(
-      "mousemove",
-      (event) => {
-        if (!window.innerWidth) return;
-
-        targetWind =
-          (event.clientX / window.innerWidth - 0.5) * 2;
-      },
-      { passive: true }
-    );
-
-    function animate() {
-      windX +=
-        (targetWind - windX) * 0.035;
-
-      document.documentElement.style.setProperty(
-        "--floral-wind",
-        `${windX * 18}px`
-      );
-
-      requestAnimationFrame(animate);
-    }
-
-    animate();
-  }
-
-  /* =========================================================
-     5. Mouse parallax
-     ========================================================= */
-
-  function mouseParallax() {
-    const elements = document.querySelectorAll(
-      "section, article, .card, .box, .container"
-    );
-
-    if (!elements.length) {
-      return;
-    }
-
-    let mouseX = 0;
-    let mouseY = 0;
-
-    window.addEventListener(
-      "mousemove",
-      (event) => {
-        if (!window.innerWidth || !window.innerHeight) {
-          return;
+            container.appendChild(petal);
         }
 
-        mouseX =
-          event.clientX / window.innerWidth - 0.5;
+        document.body.appendChild(container);
+    }
 
-        mouseY =
-          event.clientY / window.innerHeight - 0.5;
-      },
-      { passive: true }
-    );
 
-    function animate() {
-      elements.forEach((element, index) => {
+    /* ---------------------------------------------------------
+       3. Cursor glow
+       --------------------------------------------------------- */
+
+    function createCursorGlow() {
+
         if (
-          element.matches("nav, header, footer") ||
-          element.closest(".floral-atmosphere") ||
-          element.closest(".floral-petals")
+            window.matchMedia("(pointer: coarse)").matches
         ) {
-          return;
-        }
-
-        const depth = 2 + (index % 3);
-
-        element.style.setProperty(
-          "--floral-parallax-x",
-          `${mouseX * depth}px`
-        );
-
-        element.style.setProperty(
-          "--floral-parallax-y",
-          `${mouseY * depth}px`
-        );
-      });
-
-      requestAnimationFrame(animate);
-    }
-
-    animate();
-  }
-
-  /* =========================================================
-     6. Card tilt
-     ========================================================= */
-
-  function cardTilt() {
-    const cards = document.querySelectorAll(
-      ".card, .box, article, .project, .project-card"
-    );
-
-    if (!cards.length) {
-      return;
-    }
-
-    cards.forEach((card) => {
-      card.addEventListener(
-        "mousemove",
-        (event) => {
-          const rect =
-            card.getBoundingClientRect();
-
-          if (!rect.width || !rect.height) {
             return;
-          }
-
-          const x =
-            event.clientX - rect.left;
-
-          const y =
-            event.clientY - rect.top;
-
-          const rotateX =
-            ((y / rect.height) - 0.5) * -6;
-
-          const rotateY =
-            ((x / rect.width) - 0.5) * 6;
-
-          card.style.setProperty(
-            "--floral-rotate-x",
-            `${rotateX}deg`
-          );
-
-          card.style.setProperty(
-            "--floral-rotate-y",
-            `${rotateY}deg`
-          );
-
-          card.classList.add(
-            "floral-tilting"
-          );
-        },
-        { passive: true }
-      );
-
-      card.addEventListener(
-        "mouseleave",
-        () => {
-          card.classList.remove(
-            "floral-tilting"
-          );
-
-          card.style.setProperty(
-            "--floral-rotate-x",
-            "0deg"
-          );
-
-          card.style.setProperty(
-            "--floral-rotate-y",
-            "0deg"
-          );
         }
-      );
-    });
-  }
 
-  /* =========================================================
-     7. Hover interaction
-     ========================================================= */
+        if (document.querySelector(".floral-cursor-glow")) {
+            return;
+        }
 
-  function hoverInteraction() {
-    const interactive =
-      document.querySelectorAll(
-        "a, button, .card, .box, input, textarea, select"
-      );
+        const glow = document.createElement("div");
 
-    interactive.forEach((element) => {
-      element.classList.add(
-        "floral-interactive"
-      );
-    });
-  }
+        glow.className = "floral-cursor-glow";
 
-  /* =========================================================
-     8. Soft glow
-     ========================================================= */
+        glow.setAttribute("aria-hidden", "true");
 
-  function softGlow() {
-    const headings =
-      document.querySelectorAll(
-        "h1, h2, h3"
-      );
+        document.body.appendChild(glow);
 
-    headings.forEach((heading) => {
-      heading.classList.add(
-        "floral-soft-glow"
-      );
-    });
-  }
+        let currentX = window.innerWidth / 2;
+        let currentY = window.innerHeight / 2;
 
-  /* =========================================================
-     9. Smooth scroll
-     ========================================================= */
+        let targetX = currentX;
+        let targetY = currentY;
 
-  function smoothScroll() {
-    document.documentElement.style.scrollBehavior =
-      "smooth";
-  }
+        window.addEventListener(
+            "mousemove",
+            (event) => {
 
-  /* =========================================================
-     Accessibility
-     ========================================================= */
+                targetX = event.clientX;
+                targetY = event.clientY;
 
-  function accessibility() {
-    const media = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    );
-
-    const applyReducedMotion = () => {
-      if (media.matches) {
-        document.documentElement.classList.add(
-          "floral-reduced-motion"
+            },
+            { passive: true }
         );
-      } else {
-        document.documentElement.classList.remove(
-          "floral-reduced-motion"
+
+        function animateGlow() {
+
+            currentX +=
+                (targetX - currentX) * 0.12;
+
+            currentY +=
+                (targetY - currentY) * 0.12;
+
+            glow.style.transform =
+                `translate3d(${currentX}px, ${currentY}px, 0)`;
+
+            requestAnimationFrame(animateGlow);
+        }
+
+        animateGlow();
+    }
+
+
+    /* ---------------------------------------------------------
+       4. Wind effect
+       --------------------------------------------------------- */
+
+    function windEffect() {
+
+        let targetWind = 0;
+        let currentWind = 0;
+
+        window.addEventListener(
+            "mousemove",
+            (event) => {
+
+                const position =
+                    event.clientX / window.innerWidth;
+
+                targetWind =
+                    (position - 0.5) * 2;
+
+            },
+            { passive: true }
         );
-      }
-    };
 
-    applyReducedMotion();
+        function animateWind() {
 
-    if (typeof media.addEventListener === "function") {
-      media.addEventListener(
-        "change",
-        applyReducedMotion
-      );
-    } else if (
-      typeof media.addListener === "function"
+            currentWind +=
+                (targetWind - currentWind) * 0.04;
+
+            root.style.setProperty(
+                "--floral-wind",
+                `${currentWind * 35}px`
+            );
+
+            requestAnimationFrame(animateWind);
+        }
+
+        animateWind();
+    }
+
+
+    /* ---------------------------------------------------------
+       5. Mouse parallax
+       --------------------------------------------------------- */
+
+    function mouseParallax() {
+
+        if (
+            window.matchMedia("(pointer: coarse)").matches
+        ) {
+            return;
+        }
+
+        const elements =
+            document.querySelectorAll(
+                "[data-parallax]"
+            );
+
+        if (!elements.length) return;
+
+        let mouseX = 0;
+        let mouseY = 0;
+
+        window.addEventListener(
+            "mousemove",
+            (event) => {
+
+                mouseX =
+                    event.clientX /
+                    window.innerWidth -
+                    0.5;
+
+                mouseY =
+                    event.clientY /
+                    window.innerHeight -
+                    0.5;
+
+            },
+            { passive: true }
+        );
+
+        function animate() {
+
+            elements.forEach((element) => {
+
+                const strength =
+                    Number(
+                        element.dataset.parallax
+                    ) || 8;
+
+                const x =
+                    mouseX * strength;
+
+                const y =
+                    mouseY * strength;
+
+                element.style.setProperty(
+                    "--parallax-x",
+                    `${x}px`
+                );
+
+                element.style.setProperty(
+                    "--parallax-y",
+                    `${y}px`
+                );
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    }
+
+
+    /* ---------------------------------------------------------
+       6. Card tilt
+       --------------------------------------------------------- */
+
+    function cardTilt() {
+
+        if (
+            window.matchMedia("(pointer: coarse)").matches
+        ) {
+            return;
+        }
+
+        const cards =
+            document.querySelectorAll(
+                "[data-tilt]"
+            );
+
+        cards.forEach((card) => {
+
+            card.addEventListener(
+                "mousemove",
+                (event) => {
+
+                    const rect =
+                        card.getBoundingClientRect();
+
+                    const x =
+                        event.clientX - rect.left;
+
+                    const y =
+                        event.clientY - rect.top;
+
+                    const rotateY =
+                        ((x / rect.width) - 0.5) * 7;
+
+                    const rotateX =
+                        ((y / rect.height) - 0.5) * -7;
+
+                    card.style.setProperty(
+                        "--rotate-x",
+                        `${rotateX}deg`
+                    );
+
+                    card.style.setProperty(
+                        "--rotate-y",
+                        `${rotateY}deg`
+                    );
+
+                    card.classList.add(
+                        "floral-tilting"
+                    );
+                }
+            );
+
+            card.addEventListener(
+                "mouseleave",
+                () => {
+
+                    card.style.setProperty(
+                        "--rotate-x",
+                        "0deg"
+                    );
+
+                    card.style.setProperty(
+                        "--rotate-y",
+                        "0deg"
+                    );
+
+                    card.classList.remove(
+                        "floral-tilting"
+                    );
+                }
+            );
+        });
+    }
+
+
+    /* ---------------------------------------------------------
+       7. Scroll reveal
+       --------------------------------------------------------- */
+
+    function scrollReveal() {
+
+        const elements =
+            document.querySelectorAll(
+                "[data-reveal]"
+            );
+
+        if (!elements.length) return;
+
+        const observer =
+            new IntersectionObserver(
+                (entries) => {
+
+                    entries.forEach(
+                        (entry) => {
+
+                            if (
+                                entry.isIntersecting
+                            ) {
+
+                                entry.target.classList.add(
+                                    "is-visible"
+                                );
+
+                                observer.unobserve(
+                                    entry.target
+                                );
+                            }
+                        }
+                    );
+                },
+                {
+                    threshold: 0.12,
+                    rootMargin: "0px 0px -40px 0px"
+                }
+            );
+
+        elements.forEach(
+            (element) => {
+                observer.observe(element);
+            }
+        );
+    }
+
+
+    /* ---------------------------------------------------------
+       8. Interactive elements
+       --------------------------------------------------------- */
+
+    function interactiveElements() {
+
+        const elements =
+            document.querySelectorAll(
+                "a, button, .card, input, textarea, select"
+            );
+
+        elements.forEach(
+            (element) => {
+
+                element.classList.add(
+                    "floral-interactive"
+                );
+            }
+        );
+    }
+
+
+    /* ---------------------------------------------------------
+       9. Active link micro interaction
+       --------------------------------------------------------- */
+
+    function navigationEffect() {
+
+        const links =
+            document.querySelectorAll(
+                ".nav-links a"
+            );
+
+        links.forEach(
+            (link) => {
+
+                link.addEventListener(
+                    "mouseenter",
+                    () => {
+                        link.classList.add(
+                            "floral-nav-hover"
+                        );
+                    }
+                );
+
+                link.addEventListener(
+                    "mouseleave",
+                    () => {
+                        link.classList.remove(
+                            "floral-nav-hover"
+                        );
+                    }
+                );
+            }
+        );
+    }
+
+
+    /* ---------------------------------------------------------
+       10. Smooth scroll
+       --------------------------------------------------------- */
+
+    function smoothScroll() {
+
+        document.documentElement.style.scrollBehavior =
+            "smooth";
+    }
+
+
+    /* ---------------------------------------------------------
+       11. Accessibility
+       --------------------------------------------------------- */
+
+    function accessibility() {
+
+        const reducedMotion =
+            window.matchMedia(
+                "(prefers-reduced-motion: reduce)"
+            );
+
+        function update() {
+
+            root.classList.toggle(
+                "floral-reduced-motion",
+                reducedMotion.matches
+            );
+        }
+
+        update();
+
+        reducedMotion.addEventListener(
+            "change",
+            update
+        );
+    }
+
+
+    /* ---------------------------------------------------------
+       Initialize
+       --------------------------------------------------------- */
+
+    function init() {
+
+        createAtmosphere();
+
+        createPetals();
+
+        createCursorGlow();
+
+        windEffect();
+
+        mouseParallax();
+
+        cardTilt();
+
+        scrollReveal();
+
+        interactiveElements();
+
+        navigationEffect();
+
+        smoothScroll();
+
+        accessibility();
+
+        console.log(
+            "🌸 Floral Dream initialized"
+        );
+    }
+
+
+    if (
+        document.readyState === "loading"
     ) {
-      media.addListener(
-        "change",
-        applyReducedMotion
-      );
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            init
+        );
+
+    } else {
+
+        init();
+
     }
-  }
-
-  /* =========================================================
-     Start everything
-     ========================================================= */
-
-  function init() {
-    loadFloralCSS();
-
-    accessibility();
-
-    const reducedMotion =
-      window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
-
-    createAtmosphere();
-    createPetals();
-
-    hoverInteraction();
-    softGlow();
-    smoothScroll();
-
-    if (!reducedMotion) {
-      windEffect();
-      mouseParallax();
-      cardTilt();
-    }
-  }
-
-  /* =========================================================
-     DOM Ready
-     ========================================================= */
-
-  if (
-    document.readyState === "loading"
-  ) {
-    document.addEventListener(
-      "DOMContentLoaded",
-      init,
-      { once: true }
-    );
-  } else {
-    init();
-  }
 
 })();
