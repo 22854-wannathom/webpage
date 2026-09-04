@@ -14,14 +14,35 @@
    */
 
   const prefersReducedMotion =
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+  /* =========================================================
+     Prevent duplicate initialization
+     ========================================================= */
+
+  if (window.__FLORAL_DREAM_EFFECTS__) {
+    return;
+  }
+
+  window.__FLORAL_DREAM_EFFECTS__ = true;
 
   /* =========================================================
      1. โหลด CSS เอฟเฟกต์
      ========================================================= */
 
-  if (!document.querySelector('link[data-floral-effects]')) {
-    const link = document.createElement("link");
+  function loadFloralCSS() {
+    if (
+      document.querySelector(
+        'link[data-floral-effects]'
+      )
+    ) {
+      return;
+    }
+
+    const link =
+      document.createElement("link");
 
     link.rel = "stylesheet";
     link.href = "floral-effects.css";
@@ -35,12 +56,24 @@
      ========================================================= */
 
   function createAtmosphere() {
-    if (document.querySelector(".floral-atmosphere")) return;
+    if (
+      document.querySelector(
+        ".floral-atmosphere"
+      )
+    ) {
+      return;
+    }
 
-    const atmosphere = document.createElement("div");
+    const atmosphere =
+      document.createElement("div");
 
-    atmosphere.className = "floral-atmosphere";
-    atmosphere.setAttribute("aria-hidden", "true");
+    atmosphere.className =
+      "floral-atmosphere";
+
+    atmosphere.setAttribute(
+      "aria-hidden",
+      "true"
+    );
 
     document.body.prepend(atmosphere);
   }
@@ -50,12 +83,24 @@
      ========================================================= */
 
   function createPetals() {
-    if (document.querySelector(".floral-petals")) return;
+    if (
+      document.querySelector(
+        ".floral-petals"
+      )
+    ) {
+      return;
+    }
 
-    const container = document.createElement("div");
+    const container =
+      document.createElement("div");
 
-    container.className = "floral-petals";
-    container.setAttribute("aria-hidden", "true");
+    container.className =
+      "floral-petals";
+
+    container.setAttribute(
+      "aria-hidden",
+      "true"
+    );
 
     const symbols = [
       "🌸",
@@ -67,35 +112,46 @@
     ];
 
     const amount =
-      window.innerWidth < 600 ? 14 : 26;
+      window.innerWidth < 600
+        ? 14
+        : 26;
 
     for (let i = 0; i < amount; i++) {
-      const petal = document.createElement("span");
+      const petal =
+        document.createElement("span");
 
-      petal.className = "floral-petal";
+      petal.className =
+        "floral-petal";
 
       petal.textContent =
-        symbols[Math.floor(Math.random() * symbols.length)];
+        symbols[
+          Math.floor(
+            Math.random() *
+              symbols.length
+          )
+        ];
 
       petal.style.left =
-        ${Math.random() * 100}%;
+        `${Math.random() * 100}%`;
 
       petal.style.animationDelay =
-        ${Math.random() * -15}s;
+        `${Math.random() * -15}s`;
 
       petal.style.animationDuration =
-        ${9 + Math.random() * 9}s;
+        `${9 + Math.random() * 9}s`;
 
       petal.style.fontSize =
-        ${10 + Math.random() * 12}px;
+        `${10 + Math.random() * 12}px`;
 
       petal.style.opacity =
-        ${0.25 + Math.random() * 0.45};
+        `${0.25 + Math.random() * 0.45}`;
 
       container.appendChild(petal);
     }
 
-    document.body.appendChild(container);
+    document.body.appendChild(
+      container
+    );
   }
 
   /* =========================================================
@@ -117,21 +173,27 @@
         }
 
         mouseWind =
-          (event.clientX / window.innerWidth - 0.5) * 2;
+          (event.clientX /
+            window.innerWidth -
+            0.5) *
+          2;
       },
       { passive: true }
     );
 
     function animateWind() {
       currentWind +=
-        (mouseWind - currentWind) * 0.035;
+        (mouseWind - currentWind) *
+        0.035;
 
       document.documentElement.style.setProperty(
         "--floral-wind",
-        ${currentWind * 12}px
+        `${currentWind * 12}px`
       );
 
-      requestAnimationFrame(animateWind);
+      requestAnimationFrame(
+        animateWind
+      );
     }
 
     animateWind();
@@ -159,10 +221,14 @@
         }
 
         mouseX =
-          event.clientX / window.innerWidth - 0.5;
+          event.clientX /
+            window.innerWidth -
+          0.5;
 
         mouseY =
-          event.clientY / window.innerHeight - 0.5;
+          event.clientY /
+            window.innerHeight -
+          0.5;
       },
       { passive: true }
     );
@@ -176,15 +242,17 @@
 
       document.documentElement.style.setProperty(
         "--mouse-x",
-        ${currentX}px
+        `${currentX}px`
       );
 
       document.documentElement.style.setProperty(
         "--mouse-y",
-        ${currentY}px
+        `${currentY}px`
       );
 
-      requestAnimationFrame(animate);
+      requestAnimationFrame(
+        animate
+      );
     }
 
     animate();
@@ -195,21 +263,34 @@
      ========================================================= */
 
   function cardTilt() {
-    const cards = document.querySelectorAll(".card");
+    const cards =
+      document.querySelectorAll(
+        ".card"
+      );
 
     cards.forEach((card) => {
-      if (card.dataset.floralTilt) return;
+      if (
+        card.dataset.floralTilt
+      ) {
+        return;
+      }
 
-      card.dataset.floralTilt = "true";
+      card.dataset.floralTilt =
+        "true";
 
       card.addEventListener(
         "pointermove",
         (event) => {
-          if (window.innerWidth < 768) return;
+          if (
+            window.innerWidth < 768
+          ) {
+            return;
+          }
 
           if (
             event.pointerType &&
-            event.pointerType !== "mouse"
+            event.pointerType !==
+              "mouse"
           ) {
             return;
           }
@@ -217,12 +298,21 @@
           const rect =
             card.getBoundingClientRect();
 
+          if (
+            !rect.width ||
+            !rect.height
+          ) {
+            return;
+          }
+
           const x =
-            (event.clientX - rect.left) /
+            (event.clientX -
+              rect.left) /
             rect.width;
 
           const y =
-            (event.clientY - rect.top) /
+            (event.clientY -
+              rect.top) /
             rect.height;
 
           const rotateX =
@@ -247,7 +337,8 @@
       card.addEventListener(
         "pointerleave",
         () => {
-          card.style.transform = "";
+          card.style.transform =
+            "";
 
           card.classList.remove(
             "fx-hover"
@@ -267,25 +358,27 @@
         "a, button, .btn, .card"
       );
 
-    elements.forEach((element) => {
-      element.addEventListener(
-        "pointerenter",
-        () => {
-          element.classList.add(
-            "floral-hover-active"
-          );
-        }
-      );
+    elements.forEach(
+      (element) => {
+        element.addEventListener(
+          "pointerenter",
+          () => {
+            element.classList.add(
+              "floral-hover-active"
+            );
+          }
+        );
 
-      element.addEventListener(
-        "pointerleave",
-        () => {
-          element.classList.remove(
-            "floral-hover-active"
-          );
-        }
-      );
-    });
+        element.addEventListener(
+          "pointerleave",
+          () => {
+            element.classList.remove(
+              "floral-hover-active"
+            );
+          }
+        );
+      }
+    );
   }
 
   /* =========================================================
@@ -298,39 +391,52 @@
         ".card, .timeline-item, .section-title"
       );
 
-    if (!("IntersectionObserver" in window)) {
+    if (
+      !(
+        "IntersectionObserver" in
+        window
+      )
+    ) {
       return;
     }
 
-    elements.forEach((element) => {
-      element.classList.add(
-        "scroll-reveal"
-      );
-    });
+    elements.forEach(
+      (element) => {
+        element.classList.add(
+          "scroll-reveal"
+        );
+      }
+    );
 
     const observer =
       new IntersectionObserver(
         (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add(
-                "is-visible"
-              );
+          entries.forEach(
+            (entry) => {
+              if (
+                entry.isIntersecting
+              ) {
+                entry.target.classList.add(
+                  "is-visible"
+                );
 
-              observer.unobserve(
-                entry.target
-              );
+                observer.unobserve(
+                  entry.target
+                );
+              }
             }
-          });
+          );
         },
         {
           threshold: 0.12
         }
       );
 
-    elements.forEach((element) => {
-      observer.observe(element);
-    });
+    elements.forEach(
+      (element) => {
+        observer.observe(element);
+      }
+    );
   }
 
   /* =========================================================
@@ -347,7 +453,11 @@
      ========================================================= */
 
   function cursorGlow() {
-    if (window.innerWidth < 768) return;
+    if (
+      window.innerWidth < 768
+    ) {
+      return;
+    }
 
     const glow =
       document.createElement("div");
@@ -360,7 +470,9 @@
       "true"
     );
 
-    document.body.appendChild(glow);
+    document.body.appendChild(
+      glow
+    );
 
     let x = -200;
     let y = -200;
@@ -371,6 +483,14 @@
     window.addEventListener(
       "pointermove",
       (event) => {
+        if (
+          event.pointerType &&
+          event.pointerType !==
+            "mouse"
+        ) {
+          return;
+        }
+
         targetX = event.clientX;
         targetY = event.clientY;
       },
@@ -378,13 +498,21 @@
     );
 
     function animate() {
-      x += (targetX - x) * 0.12;
-      y += (targetY - y) * 0.12;
+      x +=
+        (targetX - x) * 0.12;
 
-      glow.style.left = ${x}px;
-      glow.style.top = ${y}px;
+      y +=
+        (targetY - y) * 0.12;
 
-      requestAnimationFrame(animate);
+      glow.style.left =
+        `${x}px`;
+
+      glow.style.top =
+        `${y}px`;
+
+      requestAnimationFrame(
+        animate
+      );
     }
 
     animate();
@@ -395,10 +523,13 @@
      ========================================================= */
 
   function init() {
+    loadFloralCSS();
+
     createAtmosphere();
 
     if (prefersReducedMotion) {
       smoothScroll();
+
       return;
     }
 
@@ -416,12 +547,18 @@
     );
   }
 
+  /* =========================================================
+     DOM Ready
+     ========================================================= */
+
   if (
-    document.readyState === "loading"
+    document.readyState ===
+    "loading"
   ) {
     document.addEventListener(
       "DOMContentLoaded",
-      init
+      init,
+      { once: true }
     );
   } else {
     init();
