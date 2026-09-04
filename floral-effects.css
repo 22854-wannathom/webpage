@@ -1,567 +1,289 @@
-(() => {
-  "use strict";
+/* =========================================================
+   🌸 FLORAL DREAM EFFECTS
+   Enhancement CSS
+   ========================================================= */
 
-  /*
-   * 🌸 FLORAL DREAM EFFECTS
-   * Non-destructive enhancement
-   *
-   * ไม่แก้:
-   * - ข้อความ
-   * - รูปภาพ
-   * - ลิงก์
-   * - แบบฟอร์ม
-   * - เนื้อหาเดิม
-   */
+:root {
+  --floral-wind: 0px;
+  --mouse-x: 0px;
+  --mouse-y: 0px;
+}
 
-  const prefersReducedMotion =
-    window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+/* =========================================================
+   Atmospheric Background
+   ========================================================= */
 
-  /* =========================================================
-     Prevent duplicate initialization
-     ========================================================= */
+.floral-atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
 
-  if (window.__FLORAL_DREAM_EFFECTS__) {
-    return;
-  }
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(255, 182, 193, 0.12),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 80% 30%,
+      rgba(255, 214, 224, 0.10),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 50% 80%,
+      rgba(221, 160, 221, 0.08),
+      transparent 40%
+    );
 
-  window.__FLORAL_DREAM_EFFECTS__ = true;
+  opacity: 0.9;
+}
 
-  /* =========================================================
-     1. โหลด CSS เอฟเฟกต์
-     ========================================================= */
+/* =========================================================
+   Floating Petals
+   ========================================================= */
 
-  function loadFloralCSS() {
-    if (
-      document.querySelector(
-        'link[data-floral-effects]'
+.floral-petals {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.floral-petal {
+  position: absolute;
+  top: -10vh;
+
+  display: block;
+
+  user-select: none;
+  pointer-events: none;
+
+  animation-name: floralPetalFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+@keyframes floralPetalFall {
+  0% {
+    transform:
+      translate3d(
+        calc(var(--floral-wind) * -1),
+        -10vh,
+        0
       )
-    ) {
-      return;
-    }
-
-    const link =
-      document.createElement("link");
-
-    link.rel = "stylesheet";
-    link.href = "floral-effects.css";
-    link.dataset.floralEffects = "true";
-
-    document.head.appendChild(link);
+      rotate(0deg);
   }
 
-  /* =========================================================
-     2. สร้างชั้นบรรยากาศ
-     ========================================================= */
-
-  function createAtmosphere() {
-    if (
-      document.querySelector(
-        ".floral-atmosphere"
+  25% {
+    transform:
+      translate3d(
+        calc(var(--floral-wind) + 3vw),
+        25vh,
+        0
       )
-    ) {
-      return;
-    }
-
-    const atmosphere =
-      document.createElement("div");
-
-    atmosphere.className =
-      "floral-atmosphere";
-
-    atmosphere.setAttribute(
-      "aria-hidden",
-      "true"
-    );
-
-    document.body.prepend(atmosphere);
+      rotate(90deg);
   }
 
-  /* =========================================================
-     3. กลีบดอกไม้ลอย
-     ========================================================= */
-
-  function createPetals() {
-    if (
-      document.querySelector(
-        ".floral-petals"
+  50% {
+    transform:
+      translate3d(
+        calc(var(--floral-wind) * -0.5 - 2vw),
+        55vh,
+        0
       )
-    ) {
-      return;
-    }
-
-    const container =
-      document.createElement("div");
-
-    container.className =
-      "floral-petals";
-
-    container.setAttribute(
-      "aria-hidden",
-      "true"
-    );
-
-    const symbols = [
-      "🌸",
-      "🌸",
-      "❀",
-      "✿",
-      "🌷",
-      "🍃"
-    ];
-
-    const amount =
-      window.innerWidth < 600
-        ? 14
-        : 26;
-
-    for (let i = 0; i < amount; i++) {
-      const petal =
-        document.createElement("span");
-
-      petal.className =
-        "floral-petal";
-
-      petal.textContent =
-        symbols[
-          Math.floor(
-            Math.random() *
-              symbols.length
-          )
-        ];
-
-      petal.style.left =
-        `${Math.random() * 100}%`;
-
-      petal.style.animationDelay =
-        `${Math.random() * -15}s`;
-
-      petal.style.animationDuration =
-        `${9 + Math.random() * 9}s`;
-
-      petal.style.fontSize =
-        `${10 + Math.random() * 12}px`;
-
-      petal.style.opacity =
-        `${0.25 + Math.random() * 0.45}`;
-
-      container.appendChild(petal);
-    }
-
-    document.body.appendChild(
-      container
-    );
+      rotate(180deg);
   }
 
-  /* =========================================================
-     4. ลม
-     ========================================================= */
-
-  function windEffect() {
-    let mouseWind = 0;
-    let currentWind = 0;
-
-    window.addEventListener(
-      "pointermove",
-      (event) => {
-        if (
-          event.pointerType &&
-          event.pointerType !== "mouse"
-        ) {
-          return;
-        }
-
-        mouseWind =
-          (event.clientX /
-            window.innerWidth -
-            0.5) *
-          2;
-      },
-      { passive: true }
-    );
-
-    function animateWind() {
-      currentWind +=
-        (mouseWind - currentWind) *
-        0.035;
-
-      document.documentElement.style.setProperty(
-        "--floral-wind",
-        `${currentWind * 12}px`
-      );
-
-      requestAnimationFrame(
-        animateWind
-      );
-    }
-
-    animateWind();
-  }
-
-  /* =========================================================
-     5. Mouse Parallax
-     ========================================================= */
-
-  function mouseParallax() {
-    let mouseX = 0;
-    let mouseY = 0;
-
-    let currentX = 0;
-    let currentY = 0;
-
-    window.addEventListener(
-      "pointermove",
-      (event) => {
-        if (
-          event.pointerType &&
-          event.pointerType !== "mouse"
-        ) {
-          return;
-        }
-
-        mouseX =
-          event.clientX /
-            window.innerWidth -
-          0.5;
-
-        mouseY =
-          event.clientY /
-            window.innerHeight -
-          0.5;
-      },
-      { passive: true }
-    );
-
-    function animate() {
-      currentX +=
-        (mouseX - currentX) * 0.04;
-
-      currentY +=
-        (mouseY - currentY) * 0.04;
-
-      document.documentElement.style.setProperty(
-        "--mouse-x",
-        `${currentX}px`
-      );
-
-      document.documentElement.style.setProperty(
-        "--mouse-y",
-        `${currentY}px`
-      );
-
-      requestAnimationFrame(
-        animate
-      );
-    }
-
-    animate();
-  }
-
-  /* =========================================================
-     6. Card Tilt
-     ========================================================= */
-
-  function cardTilt() {
-    const cards =
-      document.querySelectorAll(
-        ".card"
-      );
-
-    cards.forEach((card) => {
-      if (
-        card.dataset.floralTilt
-      ) {
-        return;
-      }
-
-      card.dataset.floralTilt =
-        "true";
-
-      card.addEventListener(
-        "pointermove",
-        (event) => {
-          if (
-            window.innerWidth < 768
-          ) {
-            return;
-          }
-
-          if (
-            event.pointerType &&
-            event.pointerType !==
-              "mouse"
-          ) {
-            return;
-          }
-
-          const rect =
-            card.getBoundingClientRect();
-
-          if (
-            !rect.width ||
-            !rect.height
-          ) {
-            return;
-          }
-
-          const x =
-            (event.clientX -
-              rect.left) /
-            rect.width;
-
-          const y =
-            (event.clientY -
-              rect.top) /
-            rect.height;
-
-          const rotateX =
-            (0.5 - y) * 6;
-
-          const rotateY =
-            (x - 0.5) * 6;
-
-          card.style.transform =
-            `perspective(900px)
-             rotateX(${rotateX}deg)
-             rotateY(${rotateY}deg)
-             translateY(-4px)`;
-
-          card.classList.add(
-            "fx-hover"
-          );
-        },
-        { passive: true }
-      );
-
-      card.addEventListener(
-        "pointerleave",
-        () => {
-          card.style.transform =
-            "";
-
-          card.classList.remove(
-            "fx-hover"
-          );
-        }
-      );
-    });
-  }
-
-  /* =========================================================
-     7. Hover Interaction
-     ========================================================= */
-
-  function hoverEffects() {
-    const elements =
-      document.querySelectorAll(
-        "a, button, .btn, .card"
-      );
-
-    elements.forEach(
-      (element) => {
-        element.addEventListener(
-          "pointerenter",
-          () => {
-            element.classList.add(
-              "floral-hover-active"
-            );
-          }
-        );
-
-        element.addEventListener(
-          "pointerleave",
-          () => {
-            element.classList.remove(
-              "floral-hover-active"
-            );
-          }
-        );
-      }
-    );
-  }
-
-  /* =========================================================
-     8. Scroll Reveal
-     ========================================================= */
-
-  function scrollReveal() {
-    const elements =
-      document.querySelectorAll(
-        ".card, .timeline-item, .section-title"
-      );
-
-    if (
-      !(
-        "IntersectionObserver" in
-        window
+  75% {
+    transform:
+      translate3d(
+        calc(var(--floral-wind) + 2vw),
+        80vh,
+        0
       )
-    ) {
-      return;
-    }
-
-    elements.forEach(
-      (element) => {
-        element.classList.add(
-          "scroll-reveal"
-        );
-      }
-    );
-
-    const observer =
-      new IntersectionObserver(
-        (entries) => {
-          entries.forEach(
-            (entry) => {
-              if (
-                entry.isIntersecting
-              ) {
-                entry.target.classList.add(
-                  "is-visible"
-                );
-
-                observer.unobserve(
-                  entry.target
-                );
-              }
-            }
-          );
-        },
-        {
-          threshold: 0.12
-        }
-      );
-
-    elements.forEach(
-      (element) => {
-        observer.observe(element);
-      }
-    );
+      rotate(270deg);
   }
 
-  /* =========================================================
-     9. Smooth Scroll
-     ========================================================= */
+  100% {
+    transform:
+      translate3d(
+        calc(var(--floral-wind) * -1),
+        115vh,
+        0
+      )
+      rotate(360deg);
+  }
+}
 
-  function smoothScroll() {
-    document.documentElement.style.scrollBehavior =
-      "smooth";
+/* =========================================================
+   Interactive Hover
+   ========================================================= */
+
+.floral-hover-active {
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.floral-hover-active:hover {
+  filter:
+    brightness(1.04)
+    saturate(1.05);
+}
+
+/* =========================================================
+   Card Tilt
+   ========================================================= */
+
+.card {
+  transform-style: preserve-3d;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  will-change: transform;
+}
+
+.card.fx-hover {
+  box-shadow:
+    0 18px 45px
+    rgba(80, 35, 65, 0.16);
+}
+
+/* =========================================================
+   Scroll Reveal
+   ========================================================= */
+
+.scroll-reveal {
+  opacity: 0;
+  transform:
+    translateY(24px);
+
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
+}
+
+.scroll-reveal.is-visible {
+  opacity: 1;
+
+  transform:
+    translateY(0);
+}
+
+/* =========================================================
+   Section Titles
+   ========================================================= */
+
+.section-title {
+  transition:
+    text-shadow 0.35s ease,
+    transform 0.35s ease;
+}
+
+.section-title:hover {
+  text-shadow:
+    0 0 18px
+    rgba(255, 182, 193, 0.45);
+}
+
+/* =========================================================
+   Cursor Glow
+   ========================================================= */
+
+.floral-cursor-glow {
+  position: fixed;
+
+  width: 180px;
+  height: 180px;
+
+  margin-left: -90px;
+  margin-top: -90px;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  z-index: 9999;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 182, 193, 0.18) 0%,
+      rgba(255, 182, 193, 0.08) 35%,
+      transparent 70%
+    );
+
+  filter: blur(8px);
+
+  mix-blend-mode: screen;
+
+  will-change:
+    left,
+    top;
+}
+
+/* =========================================================
+   Reduced Motion
+   ========================================================= */
+
+.floral-reduced-motion *,
+.floral-reduced-motion *::before,
+.floral-reduced-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+
+  scroll-behavior: auto !important;
+
+  transition-duration: 0.001ms !important;
+}
+
+.floral-reduced-motion .floral-petals,
+.floral-reduced-motion .floral-cursor-glow {
+  display: none !important;
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 767px) {
+  .floral-cursor-glow {
+    display: none;
   }
 
-  /* =========================================================
-     10. Cursor Glow
-     ========================================================= */
-
-  function cursorGlow() {
-    if (
-      window.innerWidth < 768
-    ) {
-      return;
-    }
-
-    const glow =
-      document.createElement("div");
-
-    glow.className =
-      "floral-cursor-glow";
-
-    glow.setAttribute(
-      "aria-hidden",
-      "true"
-    );
-
-    document.body.appendChild(
-      glow
-    );
-
-    let x = -200;
-    let y = -200;
-
-    let targetX = -200;
-    let targetY = -200;
-
-    window.addEventListener(
-      "pointermove",
-      (event) => {
-        if (
-          event.pointerType &&
-          event.pointerType !==
-            "mouse"
-        ) {
-          return;
-        }
-
-        targetX = event.clientX;
-        targetY = event.clientY;
-      },
-      { passive: true }
-    );
-
-    function animate() {
-      x +=
-        (targetX - x) * 0.12;
-
-      y +=
-        (targetY - y) * 0.12;
-
-      glow.style.left =
-        `${x}px`;
-
-      glow.style.top =
-        `${y}px`;
-
-      requestAnimationFrame(
-        animate
-      );
-    }
-
-    animate();
+  .card {
+    transform: none !important;
   }
 
-  /* =========================================================
-     11. Initialize
-     ========================================================= */
+  .scroll-reveal {
+    transform:
+      translateY(12px);
+  }
+}
 
-  function init() {
-    loadFloralCSS();
+/* =========================================================
+   Accessibility
+   ========================================================= */
 
-    createAtmosphere();
-
-    if (prefersReducedMotion) {
-      smoothScroll();
-
-      return;
-    }
-
-    createPetals();
-    windEffect();
-    mouseParallax();
-    cardTilt();
-    hoverEffects();
-    scrollReveal();
-    smoothScroll();
-    cursorGlow();
-
-    console.log(
-      "🌸 Floral Dream Effects activated!"
-    );
+@media (prefers-reduced-motion: reduce) {
+  .floral-petals,
+  .floral-cursor-glow {
+    display: none !important;
   }
 
-  /* =========================================================
-     DOM Ready
-     ========================================================= */
-
-  if (
-    document.readyState ===
-    "loading"
-  ) {
-    document.addEventListener(
-      "DOMContentLoaded",
-      init,
-      { once: true }
-    );
-  } else {
-    init();
+  .scroll-reveal {
+    opacity: 1 !important;
+    transform: none !important;
   }
 
-})();
+  html {
+    scroll-behavior: auto !important;
+  }
+}
